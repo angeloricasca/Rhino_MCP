@@ -1,0 +1,15 @@
+{
+  "name": "nexus-rhino-bridge",
+  "version": "1.0.0",
+  "description": "High-performance MCP bridge for Rhinoceros 3D 8",
+  "main": "nexus-rhino-server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node nexus-rhino-server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "cors": "latest",
+    "express": "latest"
+  }
+}

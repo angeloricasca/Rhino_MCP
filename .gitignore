@@ -1,0 +1,19 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno con configuracion local
+.env
+.env.local
+
+# Logs del sistema
+server.log
+*.log
+
+# Archivos del sistema operativo y Python
+.DS_Store
+__pycache__/
+*.pyc
+
+# Copias de seguridad
+*_BACKUP*
+*.zip
