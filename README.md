@@ -1,29 +1,21 @@
 # Rhino_MCP
 
-Puente de Model Context Protocol (MCP) para conectar modelos de inteligencia artificial (ChatGPT, Gemini, Claude) a traves de la extension **MCP SuperAssistant** directamente con **Rhinoceros 8** (Windows y macOS) para generacion y control de geometria 3D en tiempo real.
+Controla y genera modelos 3D en **Rhinoceros 8** directamente desde tu navegador web usando **ChatGPT**, **Google Gemini** o **Claude**, sin escribir codigo ni abrir terminales complejas.
 
 ---
 
-## Flujo de Trabajo
+## Que necesitas antes de empezar
 
-1. El usuario interactua en la pagina web de su IA preferida (ChatGPT, Google Gemini o Claude).
-2. La extension de navegador **MCP SuperAssistant** se comunica mediante Server-Sent Events (SSE) con el servidor local Node.js.
-3. El servidor traduce las herramientas MCP a comandos de socket TCP.
-4. Rhinoceros 8 recibe las instrucciones en su hilo principal de interfaz y genera la geometria en el documento activo.
-
----
-
-## Requisitos Previos
-
-- **Rhinoceros 8** instalado (Windows o macOS).
-- **Node.js** v18 o superior.
-- Navegador Google Chrome con la extension **MCP SuperAssistant** instalada.
+1. Tener **Rhinoceros 8** instalado en tu computadora (Windows o Mac).
+2. Tener **Node.js** instalado (descargalo gratis desde [nodejs.org](https://nodejs.org/)).
+3. Tener **Google Chrome** con la extension **MCP SuperAssistant** instalada:
+   - Descarga la extension gratis desde la Chrome Web Store buscando "MCP SuperAssistant" (o en [mcpsuperassistant.ai](https://mcpsuperassistant.ai/)).
 
 ---
 
-## Instalacion y Configuracion
+## Instalacion Inicial (Solo se hace una vez)
 
-### 1. Clonar el repositorio e instalar dependencias
+Abre tu terminal, pega estas tres lineas y presiona Enter:
 
 ```bash
 git clone https://github.com/angeloricasca/Rhino_MCP.git
@@ -31,103 +23,89 @@ cd Rhino_MCP
 npm install
 ```
 
-### 2. Variables de Entorno (.env)
-
-Copia el archivo de ejemplo para generar tu archivo de configuracion local:
-
-```bash
-cp .env.example .env
-```
-
-Contenido del archivo `.env`:
-
-```ini
-PORT=3000
-RHINO_HOST=127.0.0.1
-RHINO_PORT=9877
-```
-
-- `PORT`: Puerto donde se expone el servidor SSE para MCP SuperAssistant (por defecto: 3000).
-- `RHINO_HOST`: Direccion del listener local de Rhino (por defecto: 127.0.0.1).
-- `RHINO_PORT`: Puerto del socket de escucha de Rhino 8 (por defecto: 9877).
+*(Todo viene preconfigurado con valores por defecto listos para usar sin necesidad de configurar archivos adicionales).*
 
 ---
 
-## Guia de Inicio Rapido (Setup)
+## Como Usar el Programa (Guia en 3 Pasos)
 
-### Paso 1: Iniciar el receptor en Rhinoceros 8
+### Paso 1: Activar el receptor dentro de Rhino 8
 
-1. Abre **Rhinoceros 8**.
-2. En la barra de comandos de Rhino, escribe `_ScriptEditor` (o `EditPythonScript`).
-3. Abre el archivo `rhino_panel.py` (o `rhino_nexus_listener.py`) y presiona el boton **Play / Run**.
-4. Verifica la salida en la consola de comandos de Rhino:
-   - Estado esperado: `[AI Architect] Listener activo en puerto 9877 ✅`
-   - Si no se ejecuta: `Rhino no responde ❌`
+1. Abre tu programa **Rhino 8**.
+2. En la barra superior de comandos de Rhino, escribe:
+   ```text
+   _ScriptEditor
+   ```
+3. En la ventana que se abre, ve a **Archivo > Abrir** y selecciona el archivo `rhino_panel.py` (o `rhino_nexus_listener.py`) dentro de la carpeta descargada.
+4. Presiona el boton verde de **Play / Run**.
+5. Verifica la linea de comandos de Rhino:
+   - Resultado esperado: `[AI Architect] Listener activo en puerto 9877 ✅`
+   - Si no aparece: `Rhino no responde ❌` (cierra y vuelve a presionar Play).
 
----
-
-### Paso 2: Iniciar el servidor puente
-
-- **En macOS:**
-  Haz doble clic en `start_mac.command` o ejecuta en la terminal:
-  ```bash
-  npm start
-  ```
-
-- **En Windows:**
-  Haz doble clic en `START_NEXUS_RHINO.bat` o ejecuta en la terminal:
-  ```cmd
-  npm start
-  ```
-
-Salida esperada en consola:
-```text
-[Rhino] Conectado exitosamente al socket de Rhino 8 en 127.0.0.1:9877 ✅
-NEXUS RHINO BRIDGE & MCP SERVER ESTAN ACTIVOS
-Endpoint MCP (SSE): http://localhost:3000/sse
-```
+*(Deja Rhino abierto y continua al paso 2).*
 
 ---
 
-### Paso 3: Conectar MCP SuperAssistant en el navegador
+### Paso 2: Iniciar el puente de conexion
 
-1. Abre [ChatGPT](https://chatgpt.com), [Google Gemini](https://gemini.google.com) o [Claude](https://claude.ai) en Google Chrome.
+Ve a la carpeta del proyecto en tu computadora:
+
+- **Si usas Mac:** Haz doble clic sobre el archivo `start_mac.command`.
+- **Si usas Windows:** Haz doble clic sobre el archivo `START_NEXUS_RHINO.bat`.
+
+Se abrira una ventana que se mantendra abierta. Observa el texto en la ventana:
+- Resultado esperado: `[Rhino] Conectado exitosamente al socket de Rhino 8 en 127.0.0.1:9877 ✅`
+- Si no conecta: `No se pudo conectar a Rhino ❌` (asegurate de haber completado el Paso 1 en Rhino primero).
+
+*(Deja esa ventana abierta mientras estes usando la IA).*
+
+---
+
+### Paso 3: Conectar la IA en tu navegador
+
+1. Abre tu navegador Chrome y entra a tu IA habitual: [ChatGPT](https://chatgpt.com), [Google Gemini](https://gemini.google.com) o [Claude](https://claude.ai).
 2. Abre la ventana de la extension **MCP SuperAssistant**:
-   - Ingresa en la seccion de Settings.
-   - Configura el puerto del servidor en `3000` (URL: `http://localhost:3000/sse`).
-   - Presiona el boton **Save & Reconnect**.
-3. Confirma el estado de conexion:
-   - Conexion correcta: `Server Connected ✅`
+   - Haz clic en la seccion de Settings (icono de engranaje).
+   - Asegurate de que el puerto sea `3000`.
+   - Haz clic en el boton **Save & Reconnect**.
+3. Confirma el estado en la extension:
+   - Estado correcto: `Server Connected ✅`
    - Herramientas detectadas: `Available Tools: 6 of 6 tools enabled ✅`
-   - Si dice desconectado: `Server Disconnected ❌` (Revisar que el servidor de Node este en ejecucion).
-4. En el chat de la IA, presiona el boton **Attach** para inyectar el contexto de herramientas.
-5. Escribe tu solicitud de modelado en lenguaje natural:
-   > *"Configura la escena con unidades en metros y crea una torre parametrica de 8 pisos con losas cada 3.5 metros."*
-
-El modelo aparecera automaticamente en el viewport de Rhino 8.
+   - Si no conecta: `Server Disconnected ❌` (verifica que la ventana del Paso 2 continue abierta).
 
 ---
 
-## Herramientas MCP Disponibles
+## Como Crear Modelos 3D
 
-| Herramienta | Descripcion |
+Tienes dos formas faciles de usarlo:
+
+### Forma A: Escribiendo en el Chat (Recomendado)
+1. En la caja de texto donde hablas con ChatGPT o Gemini, haz clic en el boton **MCP** y luego en **Attach**.
+2. Escribe lo que deseas disenar en espanol normal. Por ejemplo:
+   > *"Configura la escena en metros y genera un pabellon parametrico ondulado con columnas de 4 metros."*
+3. La IA pensara unos segundos y la geometria aparecera directamente en la pantalla de Rhino 8.
+
+### Forma B: Ejecutar herramientas con un solo clic
+Dentro de la ventana de la extension **MCP SuperAssistant**, ve a la seccion **Available Tools**. Veras la lista de acciones disponibles con un boton llamado **Run**:
+
+| Herramienta | Que hace al presionar Run |
 | :--- | :--- |
-| `execute_python` | Ejecuta codigo Python arbitrario en Rhino 8 mediante `rhinoscriptsyntax` y `RhinoCommon`. |
-| `setup_architectural_scene` | Establece unidades en metros y genera capas estandar (`01_EJES`, `02_COLUMNAS`, `03_MUROS`, `04_LOSAS`, `05_CUBIERTA`, `06_MOBILIARIO`). |
-| `create_parametric_pavilion` | Genera una cubierta ondulada parametrica con columnas cilindricas. |
-| `create_building_massing` | Modela una volumetria conceptual con niveles y losas interiores. |
-| `get_scene_inventory` | Retorna el reporte de capas, objetos y unidades del modelo activo. |
-| `clear_scene` | Elimina los objetos visibles en la escena para iniciar un nuevo proyecto. |
+| `setup_architectural_scene` | Cambia las unidades a metros y crea las capas de arquitectura con colores CAD. |
+| `create_parametric_pavilion` | Genera una cubierta ondulada con sus columnas estructurales. |
+| `create_building_massing` | Crea una torre volumetrica con todas sus losas de entrepiso. |
+| `get_scene_inventory` | Te muestra una lista con todas las capas y objetos actuales de tu modelo. |
+| `clear_scene` | Borra todo el modelo actual para empezar uno nuevo en blanco. |
+| `execute_python` | Permite a la IA escribir cualquier codigo personalizado para geometrias complejas. |
 
 ---
 
-## Diagnostico y Solucion de Problemas
+## Que hacer si algo no funciona
 
-- **Problema:** MCP SuperAssistant muestra `Server Disconnected ❌`.
-  - **Solucion:** Comprueba que la terminal de `start_mac.command` (o `npm start`) continue abierta y que el puerto configurado en la extension sea 3000. Presiona el boton de refrescar en la extension.
+- **El texto dice `Server Disconnected ❌`:**
+  Asegurate de no haber cerrado la ventana del Paso 2 (`start_mac.command` o `START_NEXUS_RHINO.bat`). Luego presiona el boton de refrescar en la extension.
 
-- **Problema:** La extension conecta pero no dibuja geometria en Rhino `❌`.
-  - **Solucion:** Asegurate de haber ejecutado `rhino_panel.py` en Rhino antes de enviar el comando. En la terminal del servidor debe figurar `[Rhino] Conectado exitosamente ✅`.
+- **La IA responde en la web pero no dibuja nada en Rhino `❌`:**
+  Asegurate de haber ejecutado el Paso 1 dentro de Rhino antes de pedirle el diseno a la IA. En la ventana del Paso 2 debe decir `Conectado exitosamente ✅`.
 
-- **Problema:** Conflicto de puerto (`Address already in use: 3000` `❌`).
-  - **Solucion:** El script `start_mac.command` libera automaticamente cualquier proceso huerfano en el puerto 3000 antes de iniciar.
+- **Aparece un error de puerto ocupado `❌`:**
+  Cierra cualquier ventana negra que haya quedado abierta anteriormente y vuelve a hacer doble clic en `start_mac.command` o `START_NEXUS_RHINO.bat`.
